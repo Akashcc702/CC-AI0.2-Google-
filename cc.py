@@ -6,6 +6,7 @@ from flask import Flask
 from threading import Thread
 
 # ---------------- WEB SERVER ----------------
+
 app_web = Flask(__name__)
 
 @app_web.route("/")
@@ -21,25 +22,30 @@ def keep_alive():
     server.start()
 
 # ---------------- API KEYS ----------------
+
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 # ---------------- AI CLIENT ----------------
+
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=OPENROUTER_API_KEY
 )
 
 # ---------------- MEMORY ----------------
+
 user_memory = {}
 
 # ---------------- START COMMAND ----------------
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🤖 Hello! I am CC AI Bot.\nAsk me anything."
     )
 
 # ---------------- MESSAGE HANDLER ----------------
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_id = update.message.chat_id
@@ -52,6 +58,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "role": "user",
         "content": user_input
     })
+
+    # memory limit
+    if len(user_memory[user_id]) > 10:
+        user_memory[user_id] = user_memory[user_id][-10:]
 
     try:
 
@@ -77,8 +87,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(ai_reply)
 
-# ---------------- RUN BOT ----------------
+# ---------------- RUN SERVER ----------------
+
 keep_alive()
+
+# ---------------- TELEGRAM BOT ----------------
 
 app = ApplicationBuilder().token(BOT_TOKEN).build()
 
