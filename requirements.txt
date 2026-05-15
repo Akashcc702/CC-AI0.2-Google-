@@ -2,3 +2,5 @@ openai
 python-telegram-bot
 flask
 requests
+Pillow
+matplotlib
