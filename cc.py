@@ -324,7 +324,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_memory[uid]  = []
     user_submode[uid] = ""
     await update.message.reply_text(
-        "🤖 *Welcome to CC AI Bot v3!*\n\n"
+        "🤖 *Hello! I am CC AI Bot.*\n"
+        "Ask me anything.\n\n"
         "What I can do:\n"
         "💻 *Coding* — generate, debug & complete code\n"
         "🔍 *Research* — deep search & internet research\n"
@@ -355,10 +356,10 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/reset — Clear memory & reset mode\n"
         "/help  — This message\n\n"
         "*Modes (use buttons):*\n"
-        "💻 Coding   → Qwen 2.5 Coder 32B\n"
-        "🔍 Research → Perplexity + Gemini + Llama\n"
-        "🎨 Image Gen → Pollinations.ai (Flux)\n"
-        "🤖 General  → Gemma 3 / Llama\n\n"
+        "💻 Coding   → CC Coder 2.5 32B\n"
+        "🔍 Research → CC AI Deep Search 2.3 64B\n"
+        "🎨 Image Gen → CC PIC 2.5 Flash\n"
+        "🤖 General  → CC AI 1.2 4B\n\n"
         "📷 *Image Analysis:* send any photo!\n\n"
         "🔐 *Admin:*\n"
         "/message `<text>` — Broadcast to all users\n"
@@ -534,7 +535,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_mode[uid]    = "coding"
         user_submode[uid] = ""
         await update.message.reply_text(
-            "💻 *Coding AI Mode*\nPowered by Qwen 2.5 Coder 32B.\nChoose a task 👇",
+            "💻 *Coding AI Mode*\nPowered by CC Coder 2.5 32B.\nChoose a task 👇",
             parse_mode="Markdown",
             reply_markup=coding_kb(),
         )
@@ -544,7 +545,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_mode[uid]    = "research"
         user_submode[uid] = ""
         await update.message.reply_text(
-            "🔍 *Research AI Mode*\nPerplexity + Gemini + Llama online.\nChoose a type 👇",
+            "🔍 *Research AI Mode*\nCC AI Deep Search 2.3 64B.\nChoose a type 👇",
             parse_mode="Markdown",
             reply_markup=research_kb(),
         )
@@ -554,7 +555,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_mode[uid]    = "image_gen"
         user_submode[uid] = ""
         await update.message.reply_text(
-            "🎨 *Image Generation Mode*\nPowered by Pollinations.ai (Flux).\nChoose a style 👇",
+            "🎨 *Image Generation Mode*\nPowered by CC PIC 2.5 Flash.\nChoose a style 👇",
             parse_mode="Markdown",
             reply_markup=imagegen_kb(),
         )
@@ -564,7 +565,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_mode[uid]    = "general"
         user_submode[uid] = ""
         await update.message.reply_text(
-            "🤖 *General AI Mode*\nAsk me anything!",
+            "🤖 *General AI Mode*\nPowered by CC AI 1.2 4B.\nAsk me anything!",
             parse_mode="Markdown",
             reply_markup=main_kb(),
         )
