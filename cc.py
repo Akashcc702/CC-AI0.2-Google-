@@ -156,24 +156,23 @@ BTN_FACT     = "✅ Fact Checking"
 BTN_MARKET   = "📊 Market Research"
 BTN_COMPETE  = "🏢 Competitor Analysis"
 
-# ── Image gen sub (EXPANDED) ──
-BTN_T2I      = "🖼️ Text → Image"
-BTN_LOGO     = "🎯 Logo Design"
-BTN_POSTER   = "📢 Poster / Banner"
-BTN_ANIME    = "🎭 Anime / Art"
-BTN_3DRENDER = "🌀 3D Render"          # NEW
-BTN_AVATAR   = "🧑‍🚀 3D Avatar"          # NEW
-BTN_MEME     = "😂 Meme Creator"       # NEW
+# ── Image gen sub ──
+BTN_T2I       = "🖼️ Text → Image"
+BTN_LOGO      = "🎯 Logo Design"
+BTN_POSTER    = "📢 Poster / Banner"
+BTN_ANIME     = "🎭 Anime / Art"
+BTN_CINEMATIC = "🎬 Cinematic"
+BTN_MEME      = "😂 Meme Creator"
 
 # ── Common ──
-BTN_BACK     = "🔙 Main Menu"
+BTN_BACK = "🔙 Main Menu"
 
 NAV_BUTTONS = {
     BTN_CODING, BTN_RESEARCH, BTN_IMAGEGEN, BTN_GENERAL,
     BTN_HELP, BTN_RESET, BTN_CODEGEN, BTN_BUGFIX, BTN_AUTOCMP,
     BTN_WEBAPP, BTN_INTERNET, BTN_NEWS, BTN_SUMMARY, BTN_FACT,
     BTN_MARKET, BTN_COMPETE, BTN_T2I, BTN_LOGO, BTN_POSTER,
-    BTN_ANIME, BTN_3DRENDER, BTN_AVATAR, BTN_MEME, BTN_BACK,
+    BTN_ANIME, BTN_CINEMATIC, BTN_MEME, BTN_BACK,
 }
 
 # ════════════════════════════════════════════════
@@ -217,10 +216,10 @@ def research_kb():
 def imagegen_kb():
     return ReplyKeyboardMarkup(
         [
-            [KeyboardButton(BTN_T2I),      KeyboardButton(BTN_LOGO)],
-            [KeyboardButton(BTN_POSTER),   KeyboardButton(BTN_ANIME)],
-            [KeyboardButton(BTN_3DRENDER), KeyboardButton(BTN_AVATAR)],
-            [KeyboardButton(BTN_MEME),     KeyboardButton(BTN_BACK)],
+            [KeyboardButton(BTN_T2I),       KeyboardButton(BTN_CINEMATIC)],
+            [KeyboardButton(BTN_LOGO),      KeyboardButton(BTN_POSTER)],
+            [KeyboardButton(BTN_ANIME),     KeyboardButton(BTN_MEME)],
+            [KeyboardButton(BTN_BACK)],
         ],
         resize_keyboard=True,
         is_persistent=True,
@@ -412,13 +411,18 @@ _POLL_URL = (
     "?width=1024&height=1024&model=flux&seed={seed}&nologo=true&enhance=true"
 )
 
+_CINEMATIC_PREFIX = (
+    "cinematic 3D render, octane renderer, cinema4d, photorealistic, "
+    "dramatic studio lighting, subsurface scattering, ray tracing, 8K ultra HD, "
+    "depth of field, volumetric fog, professional color grading,"
+)
+
 _IMG_STYLE = {
-    BTN_T2I:      "",
-    BTN_LOGO:     "professional minimal vector logo, clean white background, bold typography, flat design,",
-    BTN_POSTER:   "high-quality poster design, vibrant colors, bold layout, professional graphic design,",
-    BTN_ANIME:    "anime illustration, highly detailed, studio-quality, vibrant colors, sharp linework,",
-    # ✨ FEATURE 1 — 3D Render style
-    BTN_3DRENDER: "3D render, octane renderer, cinema4d, photorealistic, studio lighting, subsurface scattering, ray tracing, 8K resolution,",
+    BTN_T2I:       _CINEMATIC_PREFIX,   # Text → Image: cinematic quality
+    BTN_LOGO:      "professional minimal vector logo, clean white background, bold typography, flat design,",
+    BTN_POSTER:    "high-quality poster design, vibrant colors, bold layout, professional graphic design,",
+    BTN_ANIME:     "anime illustration, highly detailed, studio-quality, vibrant colors, sharp linework,",
+    BTN_CINEMATIC: _CINEMATIC_PREFIX,   # Cinematic: same style (text→render or photo→avatar)
 }
 
 def make_image(prompt, submode):
@@ -642,7 +646,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "What I can do:\n"
         "💻 *Coding* — generate, debug & complete code\n"
         "🔍 *Research* — deep search & internet research\n"
-        "🎨 *Image Gen* — 3D renders, avatars, memes & more\n"
+        "🎨 *Image Gen* — cinematic renders, avatars, memes & more\n"
         "📷 *Vision* — send any photo to analyse it!\n\n"
         "Choose a mode from the buttons below 👇",
         parse_mode="Markdown",
@@ -670,10 +674,13 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔍 Research → CC AI Deep Search 2.3 64B\n"
         "🎨 Image Gen → CC PIC 2.5 Flash\n"
         "🤖 General  → CC AI 1.2 4B\n\n"
-        "*🆕 Image Gen sub-modes:*\n"
-        "🌀 3D Render — octane/cinema4d style\n"
-        "🧑‍🚀 3D Avatar — send selfie → 3D character\n"
-        "😂 Meme — AI caption + animated GIF\n\n"
+        "*Image Gen sub-modes:*\n"
+        "🖼️ Text → Image — cinematic quality from prompt\n"
+        "🎬 Cinematic — text prompt for 3D render  |  photo for avatar\n"
+        "🎯 Logo — professional brand logos\n"
+        "📢 Poster/Banner — bold promotional visuals\n"
+        "🎭 Anime/Art — illustrated creations\n"
+        "😂 Meme — AI-captioned animated GIF\n\n"
         "📷 *Vision:* send any photo!\n\n"
         "🔐 *Admin:* /message /users /status /chart",
         parse_mode="Markdown",
@@ -816,7 +823,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "📖 Use buttons to switch modes.\n\n"
             "💻 Coding  🔍 Research  🎨 Image Gen  🤖 General\n"
-            "🌀 3D Render  🧑‍🚀 3D Avatar  😂 Meme Creator\n\n"
+            "🎬 Cinematic  😂 Meme Creator\n\n"
             "📷 Send any photo for Vision AI analysis!",
             reply_markup=main_kb(),
         )
@@ -840,10 +847,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text == BTN_IMAGEGEN:
         user_mode[uid] = "image_gen"; user_submode[uid] = ""
         await update.message.reply_text(
-            "🎨 *Image Generation Mode*\nPowered by CC PIC 2.5 Flash.\nChoose a style 👇\n\n"
-            "🆕 *3D Render* — cinema-quality 3D\n"
-            "🆕 *3D Avatar* — send selfie → 3D character\n"
-            "🆕 *Meme Creator* — AI caption + animated GIF",
+            "🎨 *Image Generation Mode*\nPowered by CC PIC 2.5 Flash\n\n"
+            "🖼️ *Text → Image* — Type a prompt. Generates a cinematic-quality image.\n"
+            "🎬 *Cinematic* — Type a prompt for a cinematic render, or upload a photo for a 3D avatar.\n"
+            "🎯 *Logo Design* — Professional brand logos from your description.\n"
+            "📢 *Poster / Banner* — Bold promotional visuals from text.\n"
+            "🎭 *Anime / Art* — Illustrated and artistic creations.\n"
+            "😂 *Meme Creator* — AI-captioned animated meme GIFs.\n\n"
+            "Select a style below 👇",
             parse_mode="Markdown", reply_markup=imagegen_kb())
         return
 
@@ -865,20 +876,33 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"✅ *{text}* ready!\nType your request 👇", parse_mode="Markdown")
         return
 
-    if text in (BTN_T2I, BTN_LOGO, BTN_POSTER, BTN_ANIME, BTN_3DRENDER):
+    if text in (BTN_T2I, BTN_LOGO, BTN_POSTER, BTN_ANIME):
         user_submode[uid] = text
-        extra = "\n🌀 3D Render mode: cinematic quality!" if text == BTN_3DRENDER else ""
-        await update.message.reply_text(
-            f"✅ *{text}* ready!\nDescribe what you want to generate 👇{extra}",
-            parse_mode="Markdown")
+        if text == BTN_T2I:
+            await update.message.reply_text(
+                "🖼️ *Text → Image*\n\n"
+                "Generate any image from your text prompt.\n"
+                "Rendered in cinematic quality — photorealistic, studio-lit, 8K detail.\n\n"
+                "Type your prompt below 👇",
+                parse_mode="Markdown")
+        else:
+            await update.message.reply_text(
+                f"✅ *{text}* is ready.\nDescribe what you want to generate 👇",
+                parse_mode="Markdown")
         return
 
-    if text == BTN_AVATAR:
-        user_submode[uid] = BTN_AVATAR
+    if text == BTN_CINEMATIC:
+        user_submode[uid] = BTN_CINEMATIC
         await update.message.reply_text(
-            "🧑‍🚀 *3D Avatar Mode*\n\n"
-            "📸 Now *send your selfie / photo*!\n"
-            "I'll analyse it and create a stunning 3D avatar for you.",
+            "🎬 *Cinematic*\n\n"
+            "Two powerful generation modes in one:\n\n"
+            "▸ *Text → Cinematic Render*\n"
+            "  Type any prompt to generate a photorealistic,\n"
+            "  cinema-grade 3D rendered image.\n\n"
+            "▸ *Image Upload → Cinematic Avatar*\n"
+            "  Upload your photo to receive a high-quality\n"
+            "  Pixar-style 3D character avatar.\n\n"
+            "Type a prompt or upload a photo to begin 👇",
             parse_mode="Markdown")
         return
 
@@ -1004,7 +1028,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(chunk)
 
 # ════════════════════════════════════════════════
-#  PHOTO HANDLER — Vision + ✨ FEATURE 2 (3D Avatar)
+#  PHOTO HANDLER — Vision + Cinematic Avatar
 # ════════════════════════════════════════════════
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1016,9 +1040,14 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mode = get_mode(uid)
     sub  = get_sub(uid)
 
-    # ✨ FEATURE 2 — 3D Avatar from selfie
-    if mode == "image_gen" and sub == BTN_AVATAR:
+    # ── Cinematic mode: photo → Cinematic Avatar ──
+    if mode == "image_gen" and sub == BTN_CINEMATIC:
         await _handle_avatar(update, context, uid, caption)
+        return
+
+    # ── Text→Image mode: photo → generate based on user prompt ──
+    if mode == "image_gen" and sub == BTN_T2I:
+        await _handle_t2i_photo(update, context, uid, caption)
         return
 
     # Standard Vision AI
@@ -1052,8 +1081,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def _handle_avatar(update, context, uid, caption):
-    """3D Avatar pipeline: photo → Vision describe → Pollinations 3D avatar."""
-    status = await update.message.reply_text("🧑‍🚀 Scanning your face...\n⬜⬜⬜⬜⬜⬜⬜⬜")
+    """Cinematic pipeline: photo → Vision describe → Pollinations 3D Pixar avatar."""
+    status = await update.message.reply_text("🎬 Scanning your photo...\n⬜⬜⬜⬜⬜⬜⬜⬜")
 
     try:
         photo      = update.message.photo[-1]
@@ -1104,7 +1133,7 @@ async def _handle_avatar(update, context, uid, caption):
             await update.message.reply_photo(
                 photo=img_bytes,
                 caption=(
-                    f"🧑‍🚀 *3D Avatar Created!*\n"
+                    f"🎬 *Cinematic Avatar Created!*\n"
                     f"🎨 _{desc[:80]}_\n\n"
                     f"_Powered by CC PIC 2.5 Flash_"
                 ),
@@ -1116,6 +1145,59 @@ async def _handle_avatar(update, context, uid, caption):
     except Exception as e:
         await status.delete()
         await update.message.reply_text(f"⚠️ Avatar creation failed: {e}")
+
+
+async def _handle_t2i_photo(update, context, uid, caption):
+    """
+    Text → Image + photo upload:
+    Uses caption if given, otherwise falls back to the last
+    text prompt the user typed — so upload works seamlessly.
+    """
+    # Priority: caption → last user message in memory → ask
+    prompt = caption.strip()
+    if not prompt and uid in user_memory:
+        for msg in reversed(user_memory[uid]):
+            if msg["role"] == "user" and not msg["content"].startswith("[Image"):
+                prompt = msg["content"].strip()
+                break
+
+    if not prompt:
+        await update.message.reply_text(
+            "🖼️ *Text → Image*\n\n"
+            "Please type your prompt first, then upload the photo.\n\n"
+            "Example: _a futuristic cyberpunk city at night_",
+            parse_mode="Markdown",
+        )
+        return
+
+    status = await update.message.reply_text("🖼️ Generating your image...\n⬜⬜⬜⬜⬜⬜⬜⬜")
+    loop = asyncio.get_event_loop()
+
+    def _fetch_t2i():
+        url  = make_image(prompt, BTN_T2I)
+        resp = requests.get(url, timeout=90)
+        return resp.content if resp.status_code == 200 else None
+
+    anim = asyncio.create_task(_anim_loop(status, "🖼️ Generating your image..."))
+    img_bytes = await loop.run_in_executor(_executor, _fetch_t2i)
+    anim.cancel()
+    try: await anim
+    except asyncio.CancelledError: pass
+
+    await status.delete()
+
+    if img_bytes:
+        await update.message.reply_photo(
+            photo=img_bytes,
+            caption=(
+                f"🖼️ *Image Generated!*\n"
+                f"📝 _{prompt[:200]}_\n\n"
+                f"_Powered by CC PIC 2.5 Flash_"
+            ),
+            parse_mode="Markdown",
+        )
+    else:
+        await update.message.reply_text("⚠️ Image generation failed. Please try again.")
 
 # ════════════════════════════════════════════════
 #  DOCUMENT HANDLER
